@@ -37,4 +37,25 @@ class ConsoleApplicationTest {
         assertTrue(result.contains("40 л воды"));
         assertTrue(result.contains("Общая стоимость"));
     }
+
+    @Test
+    void excessiveShowerDurationIsRejectedBeforeIntegerOverflow() {
+        CalculatorSettings settings = TestSettings.defaults();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        try (Scanner scanner = new Scanner("dusche\n2147483647\n7\nnein\n");
+             PrintStream output = new PrintStream(bytes, true, StandardCharsets.UTF_8)) {
+            new ConsoleApplication(
+                    scanner,
+                    output,
+                    new WaterCalculatorService(settings),
+                    settings,
+                    new Messages(Locale.GERMAN)
+            ).run();
+        }
+
+        String result = bytes.toString(StandardCharsets.UTF_8);
+        assertTrue(result.contains("Diese Zahl ist zu groß"));
+        assertTrue(result.contains("Wasserverbrauch: 84 Liter"));
+    }
 }

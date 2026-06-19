@@ -64,6 +64,10 @@ public final class ConsoleApplication {
             try {
                 int value = Integer.parseInt(input);
                 if (value > 0) {
+                    if (value > Integer.MAX_VALUE / settings.showerLitersPerMinute()) {
+                        output.println(messages.text("error.number-too-large"));
+                        continue;
+                    }
                     return value;
                 }
                 output.println(messages.text("error.positive-number"));

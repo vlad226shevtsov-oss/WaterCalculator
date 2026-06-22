@@ -20,7 +20,7 @@ class ConsoleApplicationTest {
         CalculatorSettings settings = TestSettings.defaults();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        try (Scanner scanner = new Scanner("душ\n7\nда\n");
+        try (Scanner scanner = new Scanner("гривна\nдуш\n7\nда\n");
              PrintStream output = new PrintStream(bytes, true, StandardCharsets.UTF_8)) {
             new ConsoleApplication(
                     scanner,
@@ -36,6 +36,7 @@ class ConsoleApplicationTest {
         assertTrue(result.contains("24 л воды"));
         assertTrue(result.contains("40 л воды"));
         assertTrue(result.contains("Общая стоимость"));
+        assertTrue(result.contains("71,14"));
     }
 
     @Test
@@ -43,7 +44,7 @@ class ConsoleApplicationTest {
         CalculatorSettings settings = TestSettings.defaults();
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
-        try (Scanner scanner = new Scanner("dusche\n2147483647\n7\nnein\n");
+        try (Scanner scanner = new Scanner("euro\ndusche\n2147483647\n7\nnein\n");
              PrintStream output = new PrintStream(bytes, true, StandardCharsets.UTF_8)) {
             new ConsoleApplication(
                     scanner,

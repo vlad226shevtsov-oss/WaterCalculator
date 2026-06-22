@@ -9,6 +9,7 @@ import watercalculator.domain.WaterReport;
 import watercalculator.support.TestSettings;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,6 +46,16 @@ class WaterCalculatorServiceTest {
     @Test
     void shortShowerNeverProducesNegativeSaving() {
         assertEquals(0, calculator.calculate(new Shower(3)).possibleSavingLiters());
+    }
+
+    @Test
+    void costsAreConvertedToSelectedCurrency() {
+        WaterReport report = calculator.calculate(
+                new Shower(7), Currency.getInstance("USD"));
+
+        assertDecimalEquals("0.24080700", report.waterCost());
+        assertDecimalEquals("1.34428099680", report.energyCost());
+        assertDecimalEquals("1.58508799680", report.totalCost());
     }
 
     private static void assertDecimalEquals(String expected, BigDecimal actual) {

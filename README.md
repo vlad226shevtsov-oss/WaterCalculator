@@ -1,6 +1,7 @@
 # Water Calculator
 
 Console application that estimates water consumption, energy usage, and monetary cost for a shower or bath.
+The user can choose EUR, USD, or UAH before the calculation.
 
 ## Architecture
 
@@ -31,4 +32,6 @@ java -cp target/classes watercalculator.Main --config=C:\path\calculator.propert
 ```
 
 Default assumptions and example tariffs are stored in
-`src/main/resources/calculator.properties`. They are configuration examples, not universal utility prices.
+`src/main/resources/calculator.properties`. Tariffs are stored in EUR and converted
+with the configurable `exchange-rate.*` snapshot. These are configuration examples,
+not universal utility prices or live exchange rates.

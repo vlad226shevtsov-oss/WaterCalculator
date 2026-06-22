@@ -33,7 +33,8 @@ class CalculatorSettingsTest {
                 defaults.kwhPerLiterDegree(),
                 defaults.waterPricePerCubicMeter(),
                 defaults.energyPricePerKwh(),
-                defaults.currency()
+                defaults.currency(),
+                defaults.exchangeRates()
         ));
     }
 }

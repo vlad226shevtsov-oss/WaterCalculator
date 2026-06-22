@@ -1,7 +1,7 @@
 # Water Calculator
 
 Console application that estimates water consumption, energy usage, and monetary cost for a shower or bath.
-The user can choose EUR, USD, or UAH before the calculation.
+The user first chooses German or Russian, then EUR, USD, or UAH.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ mvn package
 java -cp target/classes watercalculator.Main
 ```
 
-Russian interface:
+The application asks for `de` or `ru` interactively. To skip that question, pass the language explicitly:
 
 ```shell
 java -cp target/classes watercalculator.Main --lang=ru

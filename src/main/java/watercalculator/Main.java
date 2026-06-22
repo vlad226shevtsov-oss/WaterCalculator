@@ -4,6 +4,7 @@ import watercalculator.application.WaterCalculatorService;
 import watercalculator.config.SettingsLoader;
 import watercalculator.domain.CalculatorSettings;
 import watercalculator.ui.ConsoleApplication;
+import watercalculator.ui.LanguageSelector;
 import watercalculator.ui.Messages;
 
 import java.io.IOException;
@@ -17,18 +18,21 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        Locale locale = readLocale(args);
-        Messages messages = new Messages(locale);
-
-        try {
-            CalculatorSettings settings = loadSettings(args);
-            WaterCalculatorService calculator = new WaterCalculatorService(settings);
-
-            try (Scanner scanner = new Scanner(System.in)) {
-                new ConsoleApplication(scanner, System.out, calculator, settings, messages).run();
+        try (Scanner scanner = new Scanner(System.in)) {
+            Locale locale = readLocaleOption(args);
+            if (locale == null) {
+                locale = new LanguageSelector(scanner, System.out).readLanguage();
             }
-        } catch (IOException | IllegalArgumentException e) {
-            System.err.println(messages.format("error.settings", e.getMessage()));
+            Messages messages = new Messages(locale);
+
+            try {
+                CalculatorSettings settings = loadSettings(args);
+                WaterCalculatorService calculator = new WaterCalculatorService(settings);
+
+                new ConsoleApplication(scanner, System.out, calculator, settings, messages).run();
+            } catch (IOException | IllegalArgumentException e) {
+                System.err.println(messages.format("error.settings", e.getMessage()));
+            }
         }
     }
 
@@ -38,9 +42,15 @@ public final class Main {
         return configPath == null ? loader.loadDefault() : loader.load(Path.of(configPath));
     }
 
-    private static Locale readLocale(String[] args) {
+    private static Locale readLocaleOption(String[] args) {
         String language = findOption(args, "--lang=");
-        return "ru".equalsIgnoreCase(language) ? Locale.forLanguageTag("ru") : Locale.GERMAN;
+        if ("ru".equalsIgnoreCase(language)) {
+            return Locale.forLanguageTag("ru");
+        }
+        if ("de".equalsIgnoreCase(language)) {
+            return Locale.GERMAN;
+        }
+        return null;
     }
 
     private static String findOption(String[] args, String prefix) {

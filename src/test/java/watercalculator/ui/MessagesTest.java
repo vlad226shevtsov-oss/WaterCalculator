@@ -17,6 +17,7 @@ class MessagesTest {
 
         assertTrue(russian.matchesToken("choice.shower.tokens", " ДУШ "));
         assertTrue(russian.matchesToken("choice.yes.tokens", "Да"));
+        assertTrue(russian.matchesToken("choice.currency.uah.tokens", "Гривна"));
         assertFalse(russian.matchesToken("choice.yes.tokens", "возможно"));
     }
 

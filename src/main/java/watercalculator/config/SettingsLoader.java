@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Currency;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -36,6 +37,13 @@ public final class SettingsLoader {
         Properties properties = new Properties();
         properties.load(input);
 
+        Currency baseCurrency = Currency.getInstance(requiredProperty(properties, "currency"));
+        Map<Currency, BigDecimal> exchangeRates = Map.of(
+                Currency.getInstance("EUR"), decimalProperty(properties, "exchange-rate.EUR"),
+                Currency.getInstance("USD"), decimalProperty(properties, "exchange-rate.USD"),
+                Currency.getInstance("UAH"), decimalProperty(properties, "exchange-rate.UAH")
+        );
+
         return new CalculatorSettings(
                 intProperty(properties, "shower.liters-per-minute"),
                 intProperty(properties, "bath.liters"),
@@ -49,7 +57,8 @@ public final class SettingsLoader {
                 decimalProperty(properties, "energy.kwh-per-liter-degree"),
                 decimalProperty(properties, "price.water-per-cubic-meter"),
                 decimalProperty(properties, "price.energy-per-kwh"),
-                Currency.getInstance(requiredProperty(properties, "currency"))
+                baseCurrency,
+                exchangeRates
         );
     }
 

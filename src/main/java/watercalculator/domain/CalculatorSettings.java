@@ -2,6 +2,7 @@ package watercalculator.domain;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Map;
 import java.util.Objects;
 
 public record CalculatorSettings(
@@ -17,7 +18,8 @@ public record CalculatorSettings(
         BigDecimal kwhPerLiterDegree,
         BigDecimal waterPricePerCubicMeter,
         BigDecimal energyPricePerKwh,
-        Currency currency
+        Currency currency,
+        Map<Currency, BigDecimal> exchangeRates
 ) {
     public CalculatorSettings {
         requirePositive(showerLitersPerMinute, "showerLitersPerMinute");
@@ -39,6 +41,15 @@ public record CalculatorSettings(
         requireNonNegative(waterPricePerCubicMeter, "waterPricePerCubicMeter");
         requireNonNegative(energyPricePerKwh, "energyPricePerKwh");
         Objects.requireNonNull(currency, "currency must not be null");
+        Objects.requireNonNull(exchangeRates, "exchangeRates must not be null");
+        exchangeRates = Map.copyOf(exchangeRates);
+        if (!exchangeRates.containsKey(currency)) {
+            throw new IllegalArgumentException("exchange rate for base currency is required");
+        }
+        exchangeRates.forEach((targetCurrency, rate) -> {
+            Objects.requireNonNull(targetCurrency, "exchange rate currency must not be null");
+            requirePositive(rate, "exchange rate for " + targetCurrency);
+        });
 
         if (hotWaterTemperatureCelsius.compareTo(coldWaterTemperatureCelsius) <= 0) {
             throw new IllegalArgumentException("hot water temperature must exceed cold water temperature");
@@ -47,6 +58,15 @@ public record CalculatorSettings(
 
     public BigDecimal temperatureDifferenceCelsius() {
         return hotWaterTemperatureCelsius.subtract(coldWaterTemperatureCelsius);
+    }
+
+    public BigDecimal exchangeRate(Currency targetCurrency) {
+        Objects.requireNonNull(targetCurrency, "targetCurrency must not be null");
+        BigDecimal rate = exchangeRates.get(targetCurrency);
+        if (rate == null) {
+            throw new IllegalArgumentException("unsupported currency: " + targetCurrency);
+        }
+        return rate;
     }
 
     private static void requirePositive(int value, String name) {

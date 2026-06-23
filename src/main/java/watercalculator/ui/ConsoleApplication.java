@@ -9,10 +9,15 @@ import watercalculator.domain.WaterConsumption;
 import watercalculator.domain.WaterReport;
 
 import java.io.PrintStream;
+import java.util.Currency;
 import java.util.Objects;
 import java.util.Scanner;
 
 public final class ConsoleApplication {
+
+    private static final Currency EUR = Currency.getInstance("EUR");
+    private static final Currency USD = Currency.getInstance("USD");
+    private static final Currency UAH = Currency.getInstance("UAH");
 
     private final Scanner scanner;
     private final PrintStream output;
@@ -35,10 +40,29 @@ public final class ConsoleApplication {
     }
 
     public void run() {
+        Currency currency = readCurrency();
         WaterConsumption consumption = readConsumption();
-        WaterReport report = calculator.calculate(consumption);
-        printReport(report);
+        WaterReport report = calculator.calculate(consumption, currency);
+        printReport(report, currency);
         askAboutDishwashing();
+    }
+
+    private Currency readCurrency() {
+        while (true) {
+            output.print(messages.text("prompt.currency") + " ");
+            String input = scanner.nextLine();
+
+            if (messages.matchesToken("choice.currency.eur.tokens", input)) {
+                return EUR;
+            }
+            if (messages.matchesToken("choice.currency.usd.tokens", input)) {
+                return USD;
+            }
+            if (messages.matchesToken("choice.currency.uah.tokens", input)) {
+                return UAH;
+            }
+            output.println(messages.text("error.currency"));
+        }
     }
 
     private WaterConsumption readConsumption() {
@@ -77,7 +101,7 @@ public final class ConsoleApplication {
         }
     }
 
-    private void printReport(WaterReport report) {
+    private void printReport(WaterReport report, Currency currency) {
         output.println();
         output.println(messages.text("report.title"));
         output.println();
@@ -85,11 +109,11 @@ public final class ConsoleApplication {
         output.println(messages.format("report.water", report.liters()));
         output.println(messages.format("report.energy", messages.formatDecimal(report.energyKwh())));
         output.println(messages.format("report.water-cost",
-                messages.formatCurrency(report.waterCost(), settings.currency())));
+                messages.formatCurrency(report.waterCost(), currency)));
         output.println(messages.format("report.energy-cost",
-                messages.formatCurrency(report.energyCost(), settings.currency())));
+                messages.formatCurrency(report.energyCost(), currency)));
         output.println(messages.format("report.total-cost",
-                messages.formatCurrency(report.totalCost(), settings.currency())));
+                messages.formatCurrency(report.totalCost(), currency)));
         output.println();
         output.println(messages.text("report.rating-title"));
         output.println(messages.text(ratingKey(report)));

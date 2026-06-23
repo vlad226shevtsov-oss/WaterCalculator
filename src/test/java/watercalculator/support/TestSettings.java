@@ -4,6 +4,7 @@ import watercalculator.domain.CalculatorSettings;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Map;
 
 public final class TestSettings {
 
@@ -24,7 +25,12 @@ public final class TestSettings {
                 new BigDecimal("0.001163"),
                 new BigDecimal("2.50"),
                 new BigDecimal("0.40"),
-                Currency.getInstance("EUR")
+                Currency.getInstance("EUR"),
+                Map.of(
+                        Currency.getInstance("EUR"), BigDecimal.ONE,
+                        Currency.getInstance("USD"), new BigDecimal("1.1467"),
+                        Currency.getInstance("UAH"), new BigDecimal("51.4631")
+                )
         );
     }
 }
